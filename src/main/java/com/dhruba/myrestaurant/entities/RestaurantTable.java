@@ -1,5 +1,6 @@
 package com.dhruba.myrestaurant.entities;
 
+import com.dhruba.myrestaurant.entities.enums.RestaurantTableStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -35,10 +36,6 @@ public class RestaurantTable {
     @Positive(message = "Price must be positive")
     private Double basePrice;
 
-    @Column(name = "current_price")
-    @Positive
-    private Double currentPrice;
-
     @Column(name = "booking_status")
     @Enumerated(EnumType.STRING)
     private RestaurantTableStatus bookingStatus = RestaurantTableStatus.AVAILABLE;
@@ -49,6 +46,3 @@ public class RestaurantTable {
 
 }
 
-enum RestaurantTableStatus{
-    BOOKED, AVAILABLE
-}
