@@ -24,11 +24,11 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "reservation_date_time",nullable = false)
+    @Column(name = "reservation_date_time", nullable = false)
     @Future(message = "Reservation must be in future")
     private LocalDateTime reservationDateTime;
 
-    @Column(name = "reservation_made_at",nullable = false,updatable = false)
+    @Column(name = "reservation_made_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime reservationMadeAt;
 
@@ -39,7 +39,7 @@ public class Reservation {
     @Column(name = "deposit_paid")
     private Boolean depositPaid = false;
 
-    @ManyToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
@@ -47,6 +47,6 @@ public class Reservation {
     private List<RestaurantTable> restaurantTables = new ArrayList<>();
 }
 
-enum ReservationStatus{
+enum ReservationStatus {
     CONFIRMED, CANCELLED, COMPLETED
 }

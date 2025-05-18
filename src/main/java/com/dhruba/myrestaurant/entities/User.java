@@ -33,10 +33,10 @@ public class User {
     private String email;
 
     @NotBlank
-    @Pattern(regexp = "^[1-9]\\d{9}$",message = "Invalid phone number")
+    @Pattern(regexp = "^[1-9]\\d{9}$", message = "Invalid phone number")
     private String phone;
 
-    private Integer loyaltyPoints;
+    private Integer loyaltyPoints = 0;
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations = new ArrayList<>();
