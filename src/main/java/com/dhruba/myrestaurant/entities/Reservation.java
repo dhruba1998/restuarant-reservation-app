@@ -43,7 +43,7 @@ public class Reservation {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToMany(mappedBy = "restaurant_table_id")
+    @OneToMany(mappedBy = "id")
     private List<RestaurantTable> restaurantTables = new ArrayList<>();
 }
 

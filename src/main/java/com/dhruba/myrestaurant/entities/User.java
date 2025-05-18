@@ -38,7 +38,7 @@ public class User {
 
     private Integer loyaltyPoints;
 
-    @OneToMany(mappedBy = "user_id")
+    @OneToMany(mappedBy = "user")
     private List<Reservation> reservations = new ArrayList<>();
 
 }
