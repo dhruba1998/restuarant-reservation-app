@@ -1,6 +1,8 @@
 package com.dhruba.myrestaurant.entities;
 
 import com.dhruba.myrestaurant.entities.enums.RestaurantTableStatus;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -10,6 +12,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "restaurant_table")
@@ -40,9 +45,9 @@ public class RestaurantTable {
     @Enumerated(EnumType.STRING)
     private RestaurantTableStatus bookingStatus = RestaurantTableStatus.AVAILABLE;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "reservation_id", referencedColumnName = "id")
-    private Reservation reservation;
+    @ManyToMany(mappedBy = "restaurantTables",cascade = CascadeType.ALL)
+    @JsonBackReference
+    private List<Reservation> reservation = new ArrayList<>();
 
 }
 
