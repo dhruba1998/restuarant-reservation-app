@@ -1,46 +1,77 @@
 package com.dhruba.myrestaurant.services;
 
+import com.dhruba.myrestaurant.dtos.UserDto;
 import com.dhruba.myrestaurant.entities.User;
+import com.dhruba.myrestaurant.mappers.CustomModelMapper;
 import com.dhruba.myrestaurant.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     private UserRepo userRepo;
 
+    private CustomModelMapper modelMapper;
+
+    private UserDto userDto;
+
     @Autowired
-    public UserService(UserRepo userRepo) {
+    public UserService(UserRepo userRepo, CustomModelMapper modelMapper, UserDto userDto) {
         this.userRepo = userRepo;
+        this.modelMapper = modelMapper;
+        this.userDto = userDto;
     }
 
-    public User createUser(User user) {
-        return userRepo.save(user);
+    public UserDto createUser(User user) {
+        User newUser = userRepo.save(user);
+        userDto.setId(newUser.getId());
+        userDto.setName(newUser.getName());
+        userDto.setEmail(newUser.getEmail());
+        userDto.setPhone(newUser.getPhone());
+        return userDto;
     }
 
-    public List<User> getAllUsers() {
-        return userRepo.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepo.findAll().stream().map(user -> modelMapper.userDtoMapper(user)).toList();
     }
 
-    public User getUserById(Long userId){
-        return userRepo.findById(userId).get();
-    }
-
-    public void updateUser(Long userId,User user){
-        User oldUser = userRepo.findById(userId).get();
-        if(oldUser!=null){
-            oldUser.setName(user.getName());
-            oldUser.setEmail(user.getEmail());
-            oldUser.setPhone(user.getPhone());
-            userRepo.save(oldUser);
+    public UserDto getUserById(Long userId) {
+        Optional<User> user = userRepo.findById(userId);
+        if (user.isPresent()) {
+            return modelMapper.userDtoMapper(user.get());
         }
-
+        throw new RuntimeException(String.format("UserID %d is not found", userId));
     }
 
-    public void deleteUser(Long userId){
-        userRepo.deleteById(userId);
+    public UserDto updateUser(Long userId, User updatedUser) {
+        Optional<User> existingUser = userRepo.findById(userId);
+        if (existingUser.isPresent()) {
+            if (updatedUser.getName() != null) {
+                existingUser.get().setName(updatedUser.getName());
+            }
+            if (updatedUser.getEmail() != null) {
+                existingUser.get().setEmail(updatedUser.getEmail());
+            }
+            if (updatedUser.getPhone() != null) {
+                existingUser.get().setPhone(updatedUser.getPhone());
+            }
+            if (updatedUser.getLoyaltyPoints() != null) {
+                existingUser.get().setLoyaltyPoints(updatedUser.getLoyaltyPoints());
+            }
+            userRepo.save(existingUser.get());
+            return modelMapper.userDtoMapper(existingUser.get());
+        }
+        throw new RuntimeException("User not updated");
+    }
+
+    public void deleteUser(Long userId) {
+        if(userRepo.findById(userId).isPresent()){
+            userRepo.deleteById(userId);
+        }
+        throw new RuntimeException(String.format("UserID %d is not found",userId));
     }
 }

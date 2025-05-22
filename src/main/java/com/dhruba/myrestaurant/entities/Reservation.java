@@ -1,8 +1,6 @@
 package com.dhruba.myrestaurant.entities;
 
 import com.dhruba.myrestaurant.entities.enums.ReservationStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Future;
 import lombok.AllArgsConstructor;
@@ -44,14 +42,12 @@ public class Reservation {
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonBackReference(value = "user_ref")
     private User user;
 
     @ManyToMany
     @JoinTable(name = "reservation_table",
                 joinColumns = @JoinColumn(name = "reservation_id"),
                 inverseJoinColumns = @JoinColumn(name = "table_id"))
-    @JsonManagedReference
     private List<RestaurantTable> restaurantTables = new ArrayList<>();
 }
 

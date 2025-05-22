@@ -1,8 +1,6 @@
 package com.dhruba.myrestaurant.entities;
 
 import com.dhruba.myrestaurant.entities.enums.RestaurantTableStatus;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -46,7 +44,6 @@ public class RestaurantTable {
     private RestaurantTableStatus bookingStatus = RestaurantTableStatus.AVAILABLE;
 
     @ManyToMany(mappedBy = "restaurantTables",cascade = CascadeType.ALL)
-    @JsonBackReference
     private List<Reservation> reservation = new ArrayList<>();
 
 }

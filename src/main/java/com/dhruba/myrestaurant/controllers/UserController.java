@@ -1,5 +1,6 @@
 package com.dhruba.myrestaurant.controllers;
 
+import com.dhruba.myrestaurant.dtos.UserDto;
 import com.dhruba.myrestaurant.entities.User;
 import com.dhruba.myrestaurant.services.UserService;
 import jakarta.validation.Valid;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequestMapping("/api/v1/users")
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
@@ -24,35 +25,51 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> registerUser(@RequestBody @Valid User user) {
         try {
-            User newUser = userService.createUser(user);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(user));
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email is already registered / phone format is incorrect");
         }
     }
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
         try {
-            List<User> users = userService.getAllUsers();
-            return ResponseEntity.status(HttpStatus.OK).body(users);
+            List<UserDto> users = userService.getAllUsers();
+            if (users.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.OK).body("No user found");
+            } else {
+                return ResponseEntity.status(HttpStatus.OK).body(users);
+            }
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error while fetching users");
         }
     }
 
     @GetMapping("/{userId}")
-    public User getUserById(@PathVariable Long userId){
-        return userService.getUserById(userId);
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
+        } catch(RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("UserID %d is not found", userId));
+        }
     }
 
     @PutMapping("/{userId}")
-    public void updateUser(@PathVariable Long userId, @RequestBody User user){
-        userService.updateUser(userId,user);
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody User user) {
+        try {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.updateUser(userId, user));
+        } catch(RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User not updated");
+        }
     }
 
     @DeleteMapping("/{userId}")
-    public void deleteUser(@PathVariable Long userId){
-        userService.deleteUser(userId);
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
+        try {
+            userService.deleteUser(userId);
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(String.format("UserID %d is deleted successfully", userId));
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format("UserID %d is not found", userId));
+        }
     }
 }

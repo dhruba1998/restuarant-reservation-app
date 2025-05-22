@@ -1,7 +1,5 @@
 package com.dhruba.myrestaurant.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,6 +22,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(updatable = false)
     private Long id;
 
     @NotBlank(message = "Name is required")
@@ -41,7 +40,6 @@ public class User {
     private Integer loyaltyPoints = 0;
 
     @OneToMany(mappedBy = "user")
-    @JsonManagedReference(value = "user_ref")
     private List<Reservation> reservations = new ArrayList<>();
 
 }
