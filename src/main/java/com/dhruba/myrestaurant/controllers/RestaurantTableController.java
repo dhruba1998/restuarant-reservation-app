@@ -60,8 +60,7 @@ public class RestaurantTableController {
             return ResponseEntity.status(HttpStatus.OK).body(restaurantTableService.updateTablePrice(tableNumber,
                     newPrice));
         } catch(RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("Table with table ID %s is not " +
-                    "found", tableNumber));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
 }

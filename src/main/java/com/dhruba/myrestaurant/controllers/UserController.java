@@ -50,7 +50,7 @@ public class UserController {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(userService.getUserById(userId));
         } catch(RuntimeException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(String.format("UserID %d is not found", userId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
         }
     }
 
@@ -59,7 +59,7 @@ public class UserController {
         try {
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(userService.updateUser(userId, user));
         } catch(RuntimeException exception) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("User not updated");
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(exception.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class UserController {
             userService.deleteUser(userId);
             return ResponseEntity.status(HttpStatus.ACCEPTED).body(String.format("UserID %d is deleted successfully", userId));
         } catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format("UserID %d is not found", userId));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 }

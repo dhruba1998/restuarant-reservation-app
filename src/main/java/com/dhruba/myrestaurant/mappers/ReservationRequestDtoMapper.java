@@ -23,8 +23,8 @@ public class ReservationRequestDtoMapper {
         reservation.setRestaurantTables(
                 reservationRequestDto.getRestaurantTables().stream().
                         map(tableId -> {
-                            restaurantTableRepo.findById(tableId).get().setBookingStatus(RestaurantTableStatus.BOOKED);
-                            return restaurantTableRepo.findById(tableId).get();
+                            restaurantTableRepo.findByTableNumber(tableId).get().setBookingStatus(RestaurantTableStatus.BOOKED);
+                            return restaurantTableRepo.findByTableNumber(tableId).get();
                         }).toList()
         );
         reservation.setReservationDateTime(reservationRequestDto.getReservationDateTime());
