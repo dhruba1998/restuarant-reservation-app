@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,21 +19,27 @@ public class RestaurantTableService {
 
     private final RestaurantTableDtoMapper restaurantTableDtoMapper;
 
-    public RestaurantTable createTable(RestaurantTable table){
-        return restaurantTableRepo.save(table);
+    public RestaurantTableDto createTable(RestaurantTable table) {
+        RestaurantTable newTable = restaurantTableRepo.save(table);
+        return restaurantTableDtoMapper.getRestaurantTableDto(newTable);
     }
 
-    public List<RestaurantTableDto> getAllTableDetails(){
+    public List<RestaurantTableDto> getAllTableDetails() {
         return restaurantTableRepo.findAll().stream().map(restaurantTableDtoMapper::getRestaurantTableDto).toList();
     }
 
-    public List<RestaurantTable> getTableByBookingStatus(RestaurantTableStatus status){
-        return restaurantTableRepo.findByBookingStatus(status).get();
+    public List<RestaurantTableDto> getTableByBookingStatus(RestaurantTableStatus status) {
+        Optional<List<RestaurantTable>> tableList = restaurantTableRepo.findByBookingStatus(status);
+        return tableList.map(restaurantTables -> restaurantTables.stream().map(restaurantTableDtoMapper::getRestaurantTableDto).toList()).orElseGet(List::of);
     }
 
-    public RestaurantTable updateTablePrice(Long tableId, Double tablePrice){
-        RestaurantTable table = restaurantTableRepo.findById(tableId).get();
-        table.setBasePrice(tablePrice);
-        return restaurantTableRepo.save(table);
+    public RestaurantTableDto updateTablePrice(String tableNumber, Double tablePrice) {
+        Optional<RestaurantTable> table = restaurantTableRepo.findByTableNumber(tableNumber);
+        if (table.isPresent()) {
+            table.get().setBasePrice(tablePrice);
+            restaurantTableRepo.save(table.get());
+            return restaurantTableDtoMapper.getRestaurantTableDto(table.get());
+        }
+        throw new RuntimeException(String.format("Table with table ID %s is not found", tableNumber));
     }
 }

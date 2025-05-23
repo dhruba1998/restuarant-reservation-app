@@ -12,5 +12,6 @@ import java.util.Optional;
 public interface RestaurantTableRepo extends JpaRepository<RestaurantTable,Long> {
 
     Optional<List<RestaurantTable>> findByBookingStatus(RestaurantTableStatus bookingStatus);
+    Optional<RestaurantTable> findByTableNumber(String tableNumber);
 
 }
