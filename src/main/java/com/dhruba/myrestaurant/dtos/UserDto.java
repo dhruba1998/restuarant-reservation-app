@@ -19,6 +19,6 @@ public class UserDto {
 
     private String phone;
 
-    private Integer loyaltyPoints = 0;
+    private Integer loyaltyPoints;
 
 }

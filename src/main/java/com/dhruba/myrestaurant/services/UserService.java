@@ -4,6 +4,7 @@ import com.dhruba.myrestaurant.dtos.UserDto;
 import com.dhruba.myrestaurant.entities.User;
 import com.dhruba.myrestaurant.mappers.CustomModelMapper;
 import com.dhruba.myrestaurant.repos.UserRepo;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,11 +28,13 @@ public class UserService {
     }
 
     public UserDto createUser(User user) {
+        user.setLoyaltyPoints(0);
         User newUser = userRepo.save(user);
         userDto.setId(newUser.getId());
         userDto.setName(newUser.getName());
         userDto.setEmail(newUser.getEmail());
         userDto.setPhone(newUser.getPhone());
+        userDto.setLoyaltyPoints(newUser.getLoyaltyPoints());
         return userDto;
     }
 
@@ -50,18 +53,9 @@ public class UserService {
     public UserDto updateUser(Long userId, User updatedUser) {
         Optional<User> existingUser = userRepo.findById(userId);
         if (existingUser.isPresent()) {
-            if (updatedUser.getName() != null) {
-                existingUser.get().setName(updatedUser.getName());
-            }
-            if (updatedUser.getEmail() != null) {
-                existingUser.get().setEmail(updatedUser.getEmail());
-            }
-            if (updatedUser.getPhone() != null) {
-                existingUser.get().setPhone(updatedUser.getPhone());
-            }
-            if (updatedUser.getLoyaltyPoints() != null) {
-                existingUser.get().setLoyaltyPoints(updatedUser.getLoyaltyPoints());
-            }
+            ModelMapper modelMapper1 = new ModelMapper();
+            modelMapper1.getConfiguration().setSkipNullEnabled(true);
+            modelMapper1.map(updatedUser, existingUser.get());
             userRepo.save(existingUser.get());
             return modelMapper.userDtoMapper(existingUser.get());
         }

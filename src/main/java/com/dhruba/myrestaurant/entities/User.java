@@ -37,7 +37,7 @@ public class User {
     @Pattern(regexp = "^[1-9]\\d{9}$", message = "Invalid phone number")
     private String phone;
 
-    private Integer loyaltyPoints = 0;
+    private Integer loyaltyPoints;
 
     @OneToMany(mappedBy = "user")
     private List<Reservation> reservations = new ArrayList<>();
